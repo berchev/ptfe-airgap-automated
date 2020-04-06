@@ -89,9 +89,9 @@ ptfe_instance_public_ip = 54.174.170.9
 ```
 - right after that, the automated installation begin. Ordinary it will take 30 to 40 minutes.
 - after that time you can try to reach the dashboard on url: `http://your_tfe_fqdn:8800`. It should look like this:
-```
-```
+![](https://github.com/berchev/ptfe-airgap-automated/blob/master/screens/20.png)
+
 - if everything looks good, you can visit `https://your_tfe_fqdn`. It should look like this:
-```
-```
+![](https://github.com/berchev/ptfe-airgap-automated/blob/master/screens/21.png)
+
 
