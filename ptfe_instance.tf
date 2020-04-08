@@ -5,9 +5,9 @@ data "template_file" "settinngs_json" {
   vars = {
     pg_dbname    = aws_db_instance.postgres.name
     pg_netloc    = aws_db_instance.postgres.endpoint
-    hostname     = var.dns_name_ptfe
+    hostname     = var.dns_name_tfe
     pg_password  = var.db_password
-    enc_password = var.ptfe_instance_password
+    enc_password = var.tfe_instance_password
     pg_user      = var.db_username
     s3_bucket    = var.bucket_name
     s3_region    = var.region
@@ -20,8 +20,8 @@ data "template_file" "replicated_conf" {
 
   vars = {
     DaemonAuthenticationPassword = aws_db_instance.postgres.password
-    TlsBootstrapHostname         = var.dns_name_ptfe
-    tfe_package                      = var.airgap_package
+    TlsBootstrapHostname         = var.dns_name_tfe
+    tfe_package                  = var.airgap_package
   }
 }
 
@@ -30,13 +30,13 @@ data "template_file" "bootstrap_sh" {
   template = file("${path.module}/scripts/bootstrap.sh")
 
   vars = {
-    location_path = var.ptfe_airgap_bucket_location
-    tfe_package       = var.airgap_package
+    location_path       = var.tfe_airgap_bucket_location
+    tfe_package         = var.airgap_package
     bootstrap_installer = var.replicated_tar
   }
 }
 
-data "template_cloudinit_config" "ptfe_setup" {
+data "template_cloudinit_config" "tfe_setup" {
   gzip          = true
   base64_encode = true
 
@@ -86,24 +86,23 @@ EOF
 
 }
 
-
-resource "aws_instance" "ptfe_instance" {
-  depends_on                  = [aws_internet_gateway.ptfe_gw]
+resource "aws_instance" "tfe_instance" {
+  depends_on                  = [aws_internet_gateway.tfe_gw]
   ami                         = var.ami
   instance_type               = var.instance_type
   key_name                    = var.key_name
-  subnet_id                   = aws_subnet.third_ptfe_subnet.id
+  subnet_id                   = aws_subnet.third_tfe_subnet.id
   associate_public_ip_address = true
-  vpc_security_group_ids      = [aws_security_group.ptfe_sg.id]
-  iam_instance_profile        = aws_iam_instance_profile.ptfe_instance.name
-  user_data_base64            = data.template_cloudinit_config.ptfe_setup.rendered
+  vpc_security_group_ids      = [aws_security_group.tfe_sg.id]
+  iam_instance_profile        = aws_iam_instance_profile.tfe_instance.name
+  user_data_base64            = data.template_cloudinit_config.tfe_setup.rendered
 
   root_block_device {
     volume_size = 128
   }
 
   tags = {
-    Name = "PTFE-georgiman"
+    Name = var.aws_instance_tfe_instance_tag_name
   }
 
 }

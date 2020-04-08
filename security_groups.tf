@@ -1,11 +1,11 @@
-# Creating security group and rules for PTFE instance
-resource "aws_security_group" "ptfe_sg" {
+# Creating security group and rules for tfe instance
+resource "aws_security_group" "tfe_sg" {
   name        = var.aws_security_group_name
-  vpc_id      = aws_vpc.ptfe_vpc.id
-  description = "Security group for ptfe instance"
+  vpc_id      = aws_vpc.tfe_vpc.id
+  description = "Security group for tfe instance"
 
   tags = {
-    Name = "ptfe_instance"
+    Name = "tfe_instance"
   }
 }
 
@@ -15,7 +15,7 @@ resource "aws_security_group_rule" "ssh" {
   to_port           = 22
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.ptfe_sg.id
+  security_group_id = aws_security_group.tfe_sg.id
 }
 
 resource "aws_security_group_rule" "http" {
@@ -24,7 +24,7 @@ resource "aws_security_group_rule" "http" {
   to_port           = 80
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.ptfe_sg.id
+  security_group_id = aws_security_group.tfe_sg.id
 }
 
 resource "aws_security_group_rule" "https" {
@@ -33,7 +33,7 @@ resource "aws_security_group_rule" "https" {
   to_port           = 443
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.ptfe_sg.id
+  security_group_id = aws_security_group.tfe_sg.id
 }
 
 resource "aws_security_group_rule" "replicated" {
@@ -42,7 +42,7 @@ resource "aws_security_group_rule" "replicated" {
   to_port           = 8800
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.ptfe_sg.id
+  security_group_id = aws_security_group.tfe_sg.id
 }
 
 # Additional ports
@@ -52,7 +52,7 @@ resource "aws_security_group_rule" "range_ports_1" {
   to_port           = 9880
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.ptfe_sg.id
+  security_group_id = aws_security_group.tfe_sg.id
 }
 
 resource "aws_security_group_rule" "range_ports_2" {
@@ -61,7 +61,7 @@ resource "aws_security_group_rule" "range_ports_2" {
   to_port           = 23100
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.ptfe_sg.id
+  security_group_id = aws_security_group.tfe_sg.id
 }
 
 resource "aws_security_group_rule" "outbound_traffic" {
@@ -70,29 +70,6 @@ resource "aws_security_group_rule" "outbound_traffic" {
   to_port           = 0
   protocol          = "all"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.ptfe_sg.id
+  security_group_id = aws_security_group.tfe_sg.id
 }
 
-# Creating security group and rule for Postgers Database 
-resource "aws_security_group" "ptfe_postgres" {
-  name   = "allow_postgres_connection"
-  vpc_id = aws_vpc.ptfe_vpc.id
-
-  ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "ptfe_postgres"
-  }
-}

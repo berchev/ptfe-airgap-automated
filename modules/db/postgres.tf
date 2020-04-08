@@ -1,10 +1,10 @@
 #####################################  Dtabase provision ##################################
 resource "aws_db_subnet_group" "postgres_subnet" {
   name       = var.db_subnet_group_name
-  subnet_ids = [aws_subnet.first_ptfe_subnet.id, aws_subnet.second_ptfe_subnet.id]
+  subnet_ids = [aws_subnet.first_tfe_subnet.id, aws_subnet.second_tfe_subnet.id]
 
   tags = {
-    Name = "Postgres_DB_subnet_group"
+    Name = var.aws_db_subnet_group_postgres_subnet_tag_name
   }
 }
 
@@ -19,7 +19,7 @@ resource "aws_db_instance" "postgres" {
   password               = var.db_password
   port                   = var.db_port
   db_subnet_group_name   = aws_db_subnet_group.postgres_subnet.id
-  vpc_security_group_ids = [aws_security_group.ptfe_postgres.id]
+  vpc_security_group_ids = [aws_security_group.tfe_postgres.id]
   skip_final_snapshot    = true
 }
 

@@ -1,6 +1,6 @@
 #### Creating needed role ####
-resource "aws_iam_role" "ptfe_instance" {
-  name = "ptfe_test_role"
+resource "aws_iam_role" "tfe_instance" {
+  name = "tfe_test_role"
 
   assume_role_policy = <<-EOF
   {
@@ -19,9 +19,9 @@ resource "aws_iam_role" "ptfe_instance" {
   EOF
 }
 
-resource "aws_iam_role_policy" "test_policy" {
-  name = "ptfe_test_policy"
-  role = aws_iam_role.ptfe_instance.id
+resource "aws_iam_role_policy" "policy" {
+  name = "tfe_policy"
+  role = aws_iam_role.tfe_instance.id
 
   policy = <<-EOF
   {
@@ -39,7 +39,7 @@ resource "aws_iam_role_policy" "test_policy" {
   EOF
 }
 
-resource "aws_iam_instance_profile" "ptfe_instance" {
-  name = "ptfe-instance-test"
-  role = aws_iam_role.ptfe_instance.name
+resource "aws_iam_instance_profile" "tfe_instance" {
+  name = "tfe-instance-test"
+  role = aws_iam_role.tfe_instance.name
 }
