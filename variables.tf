@@ -1,36 +1,26 @@
-variable "region" {
+variable "aws_region" {
   description = "AWS default region"
   default     = "us-east-1"
 }
 
-#### Bucket needed for PTFE installation itself
 variable "bucket_name" {
   description = "Name of the bucket"
-  default     = "georgiman-ptfe-bucket"
 }
 
-#### PTFE Airgap package s3 path location
-variable "ptfe_airgap_bucket_location" {
+variable "tfe_airgap_bucket_location" {
   description = "TFE Airgap package need to be located in s3 bucket. Please specify the s3 bucket path"
-  default     = "berchev-bucket-test/ptfe-v4/"
 }
 
-#### Desired PTFE Airgap package (The name of the package resided into the Assets bucket)
 variable "airgap_package" {
-  description = "Desired PTFE Airgap package"
-  default     = "airgap_package_latest.airgap"
+  description = "Desired tfe Airgap package"
 }
 
-# Latest/Stable version of replicated tar (The name of the tar resided into the Assets bucket. Latest version can be downloaded from here: https://install.terraform.io/airgap/latest.tar.gz)
 variable "replicated_tar" {
   description = "Latest/Stable version of replicated package"
-  default     = "replicated.tar.gz"
 }
 
-#### PTFE instance variables definition 
 variable "ami" {
   description = "AWS ami according to the region"
-  default     = "ami-08d4a16189d2a080d"
 }
 
 variable "instance_type" {
@@ -40,19 +30,16 @@ variable "instance_type" {
 
 variable "key_name" {
   description = "Key pair name"
-  default     = "berchev_key_pair"
 }
 
 variable "aws_security_group_name" {
-  description = "Dedicated security group for ptfe-georgiman"
-  default     = "ptfe-georgiman-sg"
+  description = "Dedicated security group for tfe-georgiman"
 }
 
-variable "ptfe_instance_password" {
-  description = "Password of PTFE instance"
-  default     = "Password123#"
+variable "tfe_instance_password" {
+  description = "Password of tfe instance"
 }
-#### Database variables definition 
+
 variable "db_subnet_group_name" {
   description = "AWS database subnet group name"
   default     = "postgres_db_subnet_group"
@@ -83,20 +70,16 @@ variable "db_instance_class" {
   default     = "db.m4.large"
 }
 
-
 variable "db_name" {
   description = "AWS database name"
-  default     = "PostgresGeorgiman"
 }
 
 variable "db_username" {
   description = "AWS database username"
-  default     = "postgres"
 }
 
 variable "db_password" {
   description = "AWS database password"
-  default     = "Password123#"
 }
 
 variable "db_port" {
@@ -104,19 +87,22 @@ variable "db_port" {
   default     = "5432"
 }
 
-#### DNS record creation. BE CAREFUL with changing of DNS record you need to change DNS Name too!!!!
 variable "dns_zone_name" {
   description = "Name of my AWS hosted zone"
-  default     = "georgiman.com."
 }
 
-#### DNS Name of PTFE instance. BE CAREFUL check if DNS record
-variable "dns_name_ptfe" {
-  description = "DNS Name of PTFE instance"
-  default     = "newptfe.georgiman.com"
+variable "dns_name_tfe" {
+  description = "DNS Name of tfe instance"
 }
 
-#### Provider definition
-provider "aws" {
-  region = var.region
+variable "aws_instance_tfe_instance_tag_name" {
+  description = ""
+}
+
+variable "aws_s3_bucket_tfe_bucket_tag_name" {
+  description = ""
+}
+
+variable "aws_db_subnet_group_postgres_subnet_tag_name" {
+  description = ""
 }
