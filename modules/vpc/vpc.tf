@@ -1,10 +1,10 @@
 # Creating tfe dedicated VPC
 resource "aws_vpc" "tfe_vpc" {
-  cidr_block           = "172.0.0.0/16"
+  cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
 
   tags = {
-    Name = "tfe_vpc"
+    Name = var.aws_vpc_tfe_vpc_tag_name
   }
 }
 
@@ -13,7 +13,7 @@ resource "aws_internet_gateway" "tfe_gw" {
   vpc_id = aws_vpc.tfe_vpc.id
 
   tags = {
-    Name = "tfe_gw"
+    Name = var.aws_internet_gateway_tfe_gw_tag_name
   }
 }
 
@@ -22,12 +22,12 @@ resource "aws_route_table" "tfe_route_table" {
   vpc_id = aws_vpc.tfe_vpc.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block = var.route_table_cidr_block
     gateway_id = aws_internet_gateway.tfe_gw.id
   }
 
   tags = {
-    Name = "tfe_route"
+    Name = var.aws_route_table_tfe_route_table_tag_name
   }
 }
 
@@ -46,10 +46,10 @@ data "aws_availability_zones" "available" {
 resource "aws_subnet" "first_tfe_subnet" {
   availability_zone = data.aws_availability_zones.available.names[0]
   vpc_id            = aws_vpc.tfe_vpc.id
-  cidr_block        = "172.0.1.0/24"
+  cidr_block        = var.first_subnet_cidr_block
 
   tags = {
-    Name = "first_tfe_subnet"
+    Name = var.aws_subnet_first_tfe_subnet_tag_name
   }
 }
 
@@ -57,10 +57,10 @@ resource "aws_subnet" "first_tfe_subnet" {
 resource "aws_subnet" "second_tfe_subnet" {
   availability_zone = data.aws_availability_zones.available.names[1]
   vpc_id            = aws_vpc.tfe_vpc.id
-  cidr_block        = "172.0.2.0/24"
+  cidr_block        = var.second_subnet_cidr_block
 
   tags = {
-    Name = "second_tfe_subnet"
+    Name = var.aws_subnet_second_tfe_subnet_tag_name
   }
 }
 
@@ -68,9 +68,9 @@ resource "aws_subnet" "second_tfe_subnet" {
 resource "aws_subnet" "third_tfe_subnet" {
   availability_zone = data.aws_availability_zones.available.names[2]
   vpc_id            = aws_vpc.tfe_vpc.id
-  cidr_block        = "172.0.3.0/24"
+  cidr_block        = var.third_subnet_cidr_block
 
   tags = {
-    Name = "third_tfe_subnet"
+    Name = var.aws_subnet_third_tfe_subnet_tag_name
   }
 }

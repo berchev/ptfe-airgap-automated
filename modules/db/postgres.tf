@@ -1,7 +1,7 @@
-#####################################  Dtabase provision ##################################
 resource "aws_db_subnet_group" "postgres_subnet" {
   name       = var.db_subnet_group_name
-  subnet_ids = [aws_subnet.first_tfe_subnet.id, aws_subnet.second_tfe_subnet.id]
+  subnet_ids = [var.first_tfe_subnet, var.second_tfe_subnet]
+
 
   tags = {
     Name = var.aws_db_subnet_group_postgres_subnet_tag_name

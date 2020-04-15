@@ -1,11 +1,11 @@
 # Creating security group and rules for tfe instance
 resource "aws_security_group" "tfe_sg" {
   name        = var.aws_security_group_name
-  vpc_id      = aws_vpc.tfe_vpc.id
+  vpc_id      = var.vpc_id
   description = "Security group for tfe instance"
 
   tags = {
-    Name = "tfe_instance"
+    Name = var.aws_security_group_tfe_sg_tag_name
   }
 }
 

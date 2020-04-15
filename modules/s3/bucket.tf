@@ -1,12 +1,9 @@
 
-
 resource "aws_s3_bucket" "tfe_bucket" {
   bucket = var.bucket_name
 
   tags = {
     Name = var.aws_s3_bucket_tfe_bucket_tag_name
-
-
   }
 }
 

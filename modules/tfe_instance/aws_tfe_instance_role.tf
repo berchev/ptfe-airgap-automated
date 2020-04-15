@@ -1,6 +1,5 @@
-#### Creating needed role ####
 resource "aws_iam_role" "tfe_instance" {
-  name = "tfe_test_role"
+  name = var.tfe_instance_role_name
 
   assume_role_policy = <<-EOF
   {
@@ -20,7 +19,7 @@ resource "aws_iam_role" "tfe_instance" {
 }
 
 resource "aws_iam_role_policy" "policy" {
-  name = "tfe_policy"
+  name = var.tfe_instance_policy_name
   role = aws_iam_role.tfe_instance.id
 
   policy = <<-EOF
@@ -40,6 +39,6 @@ resource "aws_iam_role_policy" "policy" {
 }
 
 resource "aws_iam_instance_profile" "tfe_instance" {
-  name = "tfe-instance-test"
+  name = var.tfe_instance_profile_name
   role = aws_iam_role.tfe_instance.name
 }

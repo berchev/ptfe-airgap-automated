@@ -1,30 +1,29 @@
-######################## Outputs ##########################
-output "tfe_instance_public_ip" {
-  value       = aws_instance.tfe_instance.public_ip
-  description = "Public IP address of the tfe instance"
-}
-
-output "tfe_instance_public_dns" {
-  value       = aws_instance.tfe_instance.public_dns
-  description = "Public DNS address of the tfe instance"
-}
-
-output "tfe_instance_private_ip" {
-  value       = aws_instance.tfe_instance.private_ip
-  description = "Private IP address of the tfe instance"
-}
-
-output "tfe_instance_private_dns" {
-  value       = aws_instance.tfe_instance.private_dns
-  description = "Private DNS address of the tfe instance"
-}
-
 output "postgres_name" {
-  value       = aws_db_instance.postgres.name
-  description = "Postgres name"
+  value       = module.db.postgres_name
+  description = "Output of module db - Postgres database name"
 }
 
 output "postgres_hostname" {
-  value       = aws_db_instance.postgres.endpoint
-  description = "Postgres hostname"
+  value       = module.db.postgres_hostname
+  description = "Output of module db - Postgres database hostname"
+}
+
+output "tfe_instance_public_ip" {
+  value       = module.tfe_instance.tfe_instance_public_ip
+  description = "Output of module tfe_instance - Public IP address of the tfe instance"
+}
+
+output "tfe_instance_public_dns" {
+  value       = module.tfe_instance.tfe_instance_public_dns
+  description = "Output of module tfe_instance - Public DNS address of the tfe instance"
+}
+
+output "tfe_instance_private_ip" {
+  value       = module.tfe_instance.tfe_instance_private_ip
+  description = "Output of module tfe_instance - Private IP address of the tfe instance"
+}
+
+output "tfe_instance_private_dns" {
+  value       = module.tfe_instance.tfe_instance_private_dns
+  description = "Output of module tfe_instance - Private DNS address of the tfe instance"
 }
