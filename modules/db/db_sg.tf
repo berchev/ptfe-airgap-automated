@@ -1,7 +1,7 @@
 # Creating security group and rule for Postgers Database 
 resource "aws_security_group" "tfe_postgres" {
-  name   = "allow_postgres_connection"
-  vpc_id = aws_vpc.tfe_vpc.id
+  name   = var.tfe_postgres_sg_name
+  vpc_id = var.vpc_id
 
   ingress {
     from_port   = 5432
@@ -18,6 +18,6 @@ resource "aws_security_group" "tfe_postgres" {
   }
 
   tags = {
-    Name = "tfe_postgres"
+    Name = var.aws_security_group_tfe_postgres_tag_name
   }
 }

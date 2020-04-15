@@ -1,25 +1,25 @@
 # settings.json file represeted as template 
 data "template_file" "settinngs_json" {
-  template = file("${path.module}/scripts/settings.json.tpl")
+  template = file("${path.module}/../../scripts/settings.json.tpl")
 
   vars = {
-    pg_dbname    = aws_db_instance.postgres.name
-    pg_netloc    = aws_db_instance.postgres.endpoint
+    pg_dbname    = var.db_name
+    pg_netloc    = var.pg_netloc
     hostname     = var.dns_name_tfe
     pg_password  = var.db_password
     enc_password = var.tfe_instance_password
     pg_user      = var.db_username
     s3_bucket    = var.bucket_name
-    s3_region    = var.region
+    s3_region    = var.aws_region
   }
 }
 
 # replicated.conf file represented as template
 data "template_file" "replicated_conf" {
-  template = file("${path.module}/scripts/replicated.conf.tpl")
+  template = file("${path.module}/../../scripts/replicated.conf.tpl")
 
   vars = {
-    DaemonAuthenticationPassword = aws_db_instance.postgres.password
+    DaemonAuthenticationPassword = var.db_password
     TlsBootstrapHostname         = var.dns_name_tfe
     tfe_package                  = var.airgap_package
   }
@@ -27,7 +27,7 @@ data "template_file" "replicated_conf" {
 
 # bootstraping script represented as a template 
 data "template_file" "bootstrap_sh" {
-  template = file("${path.module}/scripts/bootstrap.sh")
+  template = file("${path.module}/../../scripts/bootstrap.sh")
 
   vars = {
     location_path       = var.tfe_airgap_bucket_location
@@ -87,18 +87,17 @@ EOF
 }
 
 resource "aws_instance" "tfe_instance" {
-  depends_on                  = [aws_internet_gateway.tfe_gw]
   ami                         = var.ami
   instance_type               = var.instance_type
   key_name                    = var.key_name
-  subnet_id                   = aws_subnet.third_tfe_subnet.id
+  subnet_id                   = var.third_tfe_subnet
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.tfe_sg.id]
   iam_instance_profile        = aws_iam_instance_profile.tfe_instance.name
   user_data_base64            = data.template_cloudinit_config.tfe_setup.rendered
 
   root_block_device {
-    volume_size = 128
+    volume_size = var.tfe_instance_volume_size
   }
 
   tags = {
