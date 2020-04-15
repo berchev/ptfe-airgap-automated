@@ -1,3 +1,7 @@
+variable "aws_region" {
+  description = "AWS default region"
+}
+
 variable "tfe_instance_role_name" {
   description = "Name of the tfe_instance role"
 }
