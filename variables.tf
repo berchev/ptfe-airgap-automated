@@ -196,9 +196,3 @@ variable "third_subnet_cidr_block" {
 variable "aws_subnet_third_tfe_subnet_tag_name" {
   description = "Tag name of the third subnet"
 }
-
-# Common for DB and Instance
-# variable "vpc_id" {
-#   description = "ID of created TFE VPC, passed among the modules. Will be known after creation."
-# }
-
