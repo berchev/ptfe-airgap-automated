@@ -4,15 +4,14 @@
 ## Description
 The repo is just an example how to perform TFE version 4 airgap installation with valid certificate into AWS Cloud.
 
-Following immutable infrastructure principles, we will build custom ec2 image with packer, which fullfil all TFE requirements.
-[How to build such image](https://github.com/berchev/packer-ec2-bionic64-docker)
+Following immutable infrastructure principles, we will 
+- build custom ec2 image with packer, which fullfil all [TFE requirements](https://www.terraform.io/docs/enterprise/before-installing/index.html).
+- use Terraform OSS and AWS to prepare the needed environment and the TFE Airgap installation itself
 
-We will use Terraform OSS and AWS to prepare an environment needed for TFE Airgap instalation.
-
-The Airgap installation itself will be performed by simple bash script, right after TFE instance provision.
+The Airgap installation will be performed by simple bash script, right after TFE instance provisioning.
 
 The TFE Airgap installer script will do following:
-- download Airgap package from s3 Assets bucket into /opt/tfe-installer directory
+- download Airgap package from s3 Assets bucket to /opt/tfe-installer directory of the ec2 instance
 - download replicated tar, which is actually the bootstrap installer for TFE, into /opt/tfe-installer directory
 - extract replicated tar
 - running the install script with all needed arguments
@@ -28,44 +27,63 @@ More details about the AWS environment itself, can be found into **Environment d
 ## Repo Content
 | File                   | Description                      |
 |         ---            |                ---               |
-| [aws_ptfe_role.tf](aws_ptfe_role.tf) | Creating an aws role for our instance. |
-| [dns_record.tf](dns_record.tf) | Creating DNS record using the IP of newly created instance|
-|[outputs.tf](outputs.tf)| After terraform finish its work, will prin on the screen everything that user need to know about newly created environment|
-|[postgres.tf](postgres.tf)| Terraform code for PostgeSQL database|
-|[ptfe_instance.tf](ptfe_instance.tf)| Terraform code for our TFE instance |
-|[security_groups.tf](security_groups.tf)| Terraform code related to security groups of TFE instance and PostgreSQL |
-|[variables_and_provider.tf](variables_and_provider.tf)| All variables in this project. Please review and edit if needed |
-|[vpc.tf](vpc.tf)| Terraform code related to the whole network infrastructure |
-|[bucket.tf](bucket.tf)| Terraform code related to PTFE instance bucket creation |
+| [modules/db](modules/db) | Terraform code for Postgres database module |
+| [modules/r53](modules/r53) | Terraform code for Route 53 module|
+| [modules/s3](modules/s3)| Terraform code for S3 Bucket module|
+|[modules/tfe_instance](modules/tfe_instance)| Terraform code for TFE Instance module|
+|[modules/vpc](modules/vpc)| Terraform code for VPC module |
+|[packer](packer)| Packer code and confuguration needed for building appropriate for TFE ec2 image  |
 |[scripts/bootstrap.sh](scripts/bootstrap.sh)| TFE installer script|
 |[scripts/replicated.conf.tpl](scripts/replicated.conf.tpl)| Replicated configuration file passed like a template, populated with needed variables|
 |[scripts/settings.json.tpl](scripts/settings.json.tpl)| TFE settings passed like a template, populated with needed variables|
+|[main.tf](main.tf)| main Terraform file, that calls all the modules in this project |
+|[outputs.tf](outputs.tf)| Terraform outputs |
+|[provider_aws.tf](provider_aws.tf)| Terraform provider file that includes the cloud provider only |
+|[terraform.tfvars](terraform.tfvars)| Example of terraform.tfvars file |
+|[variables.tf](variables.tf)| Terraform variables file |
 
-## Pre-requirements for this project
+
+## Requirements for this project
+- AWS Account
+- Your own Domain (I am using one from AWS)
 - Valid SSL sertificate 
 - TFE license (you can get one reaching Hashicorp Sales Team)
 - Airgap package with desired TFE version
 - [Installer bootstraper](https://install.terraform.io/airgap/latest.tar.gz)
 - Packer installed
+- Terraform OSS version 0.12.X installed
 
-## Requirements
-- AWS Account
-- Terraform OSS installed
-- Your own Domain (I am using one from AWS)
+## Initial setup (Preparing for *terrafom apply* command)
+- Part I - AWS Console 
+  - Go to [AWS Console](https://aws.amazon.com/)
+  - Create S3 Assets bucket manually. More info [here](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html)
+  - Upload `Airgap package with desired TFE version` and `Installer bootstraper`(replicated.tar) into the newly created bucket
 
-## How to install TFE Airgap 
-- make sure you have succesfully builded AWS ami, according to the description in the beginning
-- clone the repo locally
-```
-git clone https://github.com/berchev/ptfe-airgap-automated.git
-```
+- Part II - Packer
+  - clone this repository locally
+  ```
+  git clone https://github.com/berchev/ptfe-airgap-automated.git
+  ```
+  - change to packer directory
+  ```
+  cd ptfe-airgap-automated/packer
+  ```
+  - review variables section of packer json file [packer/ubuntu_docker_ce_ami.json](packer/ubuntu_docker_ce_ami.json) and change the region, ami name or the ami itself if needed.
+  - into [packer/assets](packer/assets) directory add your SSL certificates and TFE license
+  - export your AWS access and secret key 
+  ```
+  export AWS_ACCESS_KEY_ID="XXXXXXXXXXXXXXXXXXX"
+  export AWS_SECRET_ACCESS_KEY="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  ```
+  - build the ec2 image using following command  
+  ```
+  packer build ubuntu_docker_ce_ami.json
+  ```
 
-- review [variables_and_provider.tf](variables_and_provider.tf) and change variables value according to your needs. 
-- export your AWS access and secret key 
-```
-export AWS_ACCESS_KEY_ID="XXXXXXXXXXXXXXXXXXX"
-export AWS_SECRET_ACCESS_KEY="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-``` 
+## Provisioning TFE environment
+- after finishing `Initial setup` section successfully, you are ready for Terraform part
+- make sure you are on the root directory on the repo. (where main.tf is located)
+- review the example of [terraform.tfvars](terraform.tfvars) file and add populate your values
 - install all needed Terraform providers
 ```
 terraform init
@@ -93,5 +111,3 @@ ptfe_instance_public_ip = 54.174.170.9
 
 - if everything looks good, you can visit `https://your_tfe_fqdn`. It should look like this:
 ![](https://github.com/berchev/ptfe-airgap-automated/blob/master/screens/21.png)
-
-
