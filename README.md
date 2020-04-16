@@ -2,15 +2,18 @@
 
 
 ## Description
+Тerraform Еnterprise have 2 modes of install, online and airgap. Airgap is used when we need to deploy our software on restricted internet or when we want to consume local assets to avoid drift.
+
+
 The repo is just an example how to perform TFE version 4 airgap installation with valid certificate into AWS Cloud.
 
-Following immutable infrastructure principles, we will 
+Following [immutable](https://www.hashicorp.com/resources/what-is-mutable-vs-immutable-infrastructure) infrastructure principles, we will 
 - build custom ec2 image with packer, which fullfil all [TFE requirements](https://www.terraform.io/docs/enterprise/before-installing/index.html).
 - use Terraform OSS and AWS to prepare the needed environment and the TFE Airgap installation itself
 
 The Airgap installation will be performed by simple bash script, right after TFE instance provisioning.
 
-The TFE Airgap installer script will do following:
+The [TFE Airgap installer script](scripts/bootstrap.sh) will do following:
 - download Airgap package from s3 Assets bucket to /opt/tfe-installer directory of the ec2 instance
 - download replicated tar, which is actually the bootstrap installer for TFE, into /opt/tfe-installer directory
 - extract replicated tar
